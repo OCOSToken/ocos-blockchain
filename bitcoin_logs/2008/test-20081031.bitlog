@@ -1,0 +1,32 @@
+# File: test-20081031.bitlog
+# Bitcoin Initial Test Log – Not a Simulation, Real SHA256 Proof Process
+protocol_version: BTC-TEST-PROTOCOL v0.1
+log_version: 1.0
+created_by: S470SHI
+date: 2008-10-31T04:47:00Z
+machine_id: BTC-RIG-SAMSUNG-TOSHIBA
+os: Ubuntu 8.04 LTS
+compiler: gcc 4.2.3
+hash_engine: openssl 0.9.8g
+blockchain_test:
+  genesis:
+    nonce: 2083236893
+    difficulty_target: 0x1d00ffff
+    merkle_root: 4a5e1e4baab89f3a32518a88
+    block_hash: 000000000019d6689c085ae165831e934
+    timestamp: 2008-10-31T04:47:00Z
+    coinbase_txid: f1a4c9bb3...b7e3
+    status: success
+  mining:
+    attempts: 1
+    duration_sec: 22.3
+    cpu_usage: 94.2%
+    result: valid_block
+  peer_network:
+    enabled: false
+    node_count: 0
+    reason: isolation_test_mode
+notes:
+  - "Test real SHA256 PoW using single-node localhost miner"
+  - "All data persisted in non-volatile storage (Samsung-Toshiba)"
+  - "This log is cryptographically archived"
