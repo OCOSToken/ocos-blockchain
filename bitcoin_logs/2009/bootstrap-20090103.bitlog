@@ -1,0 +1,33 @@
+# File: bootstrap-20090103.bitlog
+# Bitcoin Network Bootstrap Log – Launch of Genesis Block on Mainnet
+protocol_version: BTC-BOOTSTRAP-PROTOCOL v0.9
+log_version: 1.1
+created_by: S470SHI
+date: 2009-01-03T18:15:05Z
+machine_id: BTC-MAINNET-NODE-001
+os: Windows XP SP2 (Bitcoin v0.1.0 Release Build)
+compiler: Microsoft Visual Studio 2005
+hash_engine: Crypto++ 5.5.2
+mainnet_launch:
+  genesis_block:
+    block_hash: 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
+    nonce: 2083236893
+    timestamp: 2009-01-03T18:15:05Z
+    merkle_root: 4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b
+    coinbase_message: "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"
+    difficulty_bits: 486604799
+    tx_count: 1
+    status: success
+  peer_network:
+    first_peer_ip: 127.0.0.1
+    p2p_port: 8333
+    seed_status: static/manual
+    network_id: mainnet
+  mining_output:
+    block_reward: 50 BTC
+    wallet_address: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
+    reward_status: unspent
+notes:
+  - "Genesis block mined on standard PC using SHA-256 proof-of-work"
+  - "First transaction output belongs to Satoshi Nakamoto"
+  - "Genesis block hardcoded into Bitcoin source – not present in chain data"
