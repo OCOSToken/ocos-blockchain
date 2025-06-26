@@ -1,0 +1,31 @@
+[package]
+name = "s470shi-vm"
+version = "0.1.47"
+edition = "2025"
+authors = ["OCOS Foundation <dev@ocos.io>"]
+description = "S470SHI Virtual Machine for stream-based smart contract execution with DAO, ZK, and reputation logic."
+license = "MIT"
+repository = "https://github.com/OCOSToken/s470shi-vm"
+homepage = "https://s470shi.org"
+keywords = ["vm", "zk", "dao", "reputation", "streamchain"]
+categories = ["blockchain", "virtual-machine"]
+
+[dependencies]
+chrono = "0.4"
+regex = "1.7"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[dev-dependencies]
+
+[lib]
+name = "s470shi_vm"
+path = "src/lib.rs"
+crate-type = ["rlib"]
+
+[workspace]
+members = [
+    "src",
+    "wasm_executor",
+    "tests"
+]
