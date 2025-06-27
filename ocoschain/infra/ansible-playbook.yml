@@ -1,0 +1,71 @@
+---
+# infra/ansible-playbook.yml
+# ===========================
+# 🔧 OCOS Blockchain Node Deployment via Ansible
+# This playbook provisions and launches OCOS nodes on remote infrastructure.
+
+- name: 🚀 Deploy OCOS Full Node
+  hosts: all
+  become: true
+  vars:
+    docker_version: "5:20.10.24~3-0~ubuntu-focal"
+    docker_compose_version: "1.29.2"
+    deploy_directory: "/opt/ocos-node"
+
+  tasks:
+
+    - name: 📦 Update APT cache
+      apt:
+        update_cache: yes
+
+    - name: 📦 Install required system packages
+      apt:
+        name: ["curl", "git", "unzip", "apt-transport-https", "ca-certificates", "software-properties-common"]
+        state: present
+
+    - name: 🔐 Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: ➕ Add Docker APT repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+        state: present
+
+    - name: 🐳 Install Docker Engine
+      apt:
+        name: "docker-ce={{ docker_version }}"
+        state: present
+
+    - name: 🐙 Install Docker Compose
+      get_url:
+        url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-$(uname -s)-$(uname -m)"
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: 📁 Create deployment directory
+      file:
+        path: "{{ deploy_directory }}"
+        state: directory
+        mode: '0755'
+
+    - name: 📄 Copy Docker Compose file
+      copy:
+        src: ./docker-compose.yml
+        dest: "{{ deploy_directory }}/docker-compose.yml"
+
+    - name: 🚀 Start OCOS node container
+      shell: |
+        cd {{ deploy_directory }}
+        docker-compose up -d
+      args:
+        creates: "{{ deploy_directory }}/data"
+
+    - name: ✅ Verify OCOS container status
+      shell: docker ps --filter "name=ocos-node" --format "{{.Status}}"
+      register: container_status
+
+    - name: 📋 Output container status
+      debug:
+        msg: "OCOS Node container status: {{ container_status.stdout }}"
