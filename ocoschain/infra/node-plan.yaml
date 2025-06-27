@@ -1,0 +1,83 @@
+---
+# infra/node-plan.yaml
+# =======================
+# 🌐 OCOS Global Node Deployment Blueprint
+# Defines full-scale deployment of 2738 OCOS Blockchain nodes
+
+network:
+  name: "OCOS Mainnet"
+  chain_id: 31337
+  genesis_version: v1.0.47
+  sync_mode: "full"
+  ports:
+    p2p_tcp: 30303
+    p2p_udp: 30303
+    rpc_http: 8545
+    rpc_ws: 8546
+    discovery: 30304
+
+resources:
+  disk:
+    type: ssd
+    size_gb: 500
+  memory_gb: 8
+  cpu_cores: 2
+  internet_speed: "100Mbps+"
+
+roles:
+  - validator
+  - observer
+  - archive
+
+total_nodes: 2738
+node_distribution:
+  europe:
+    hetzner:
+      cities:
+        - nuremberg
+        - helsinki
+      nodes: 1028
+  usa:
+    aws:
+      regions:
+        - us-east-1
+        - us-west-2
+      nodes: 700
+  asia:
+    aws:
+      regions:
+        - ap-southeast-1
+        - ap-northeast-1
+      nodes: 500
+  middle_east:
+    contabo:
+      cities:
+        - istanbul
+        - abu_dhabi
+      nodes: 300
+  africa:
+    local:
+      countries:
+        - kenya
+        - nigeria
+      nodes: 210
+
+monitoring:
+  enabled: true
+  stack:
+    - prometheus
+    - grafana
+
+security:
+  tls_enabled: true
+  firewall_ports:
+    - 30303
+    - 8545
+    - 8546
+    - 30304
+    - 22
+
+metadata:
+  version: "1.0.47"
+  maintainer: "OCOS Infrastructure Team"
+  last_updated: "2025-06-27"
