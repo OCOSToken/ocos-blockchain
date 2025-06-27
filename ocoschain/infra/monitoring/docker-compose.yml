@@ -1,0 +1,76 @@
+---
+# infra/monitoring/docker-compose.yml
+# =====================================
+# 📊 OCOS Monitoring Stack with Prometheus + Grafana
+# Includes full-node metrics via Prometheus endpoint (6060)
+
+version: '3.9'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ocos-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ocos-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+---
+# infra/monitoring/prometheus/prometheus.yml
+# ==========================================
+# 🔍 Prometheus scrape configuration for OCOS node metrics
+
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'ocos-nodes'
+    static_configs:
+      - targets:
+        - 'ocos-node:6060'  # internal Docker link or public IP
+
+---
+# Grafana Dashboard Guidance
+# ===========================
+
+## Dashboard Panels to Create:
+1. **Node Status**
+   - Uptime, syncing status, connected peers (if exposed)
+2. **RPC Metrics**
+   - Request count, response times
+3. **P2P Metrics**
+   - Peers, inbound/outbound connections
+4. **Disk Usage**
+   - Free vs used GB (mount /root/.ocos)
+5. **Resource Usage**
+   - CPU %, Memory %, Disk I/O
+
+## Grafana Setup Instructions:
+- Access Grafana at: http://localhost:3000
+- Login with: `admin / admin123`
+- Add Prometheus as data source (URL: `http://prometheus:9090`)
+- Import a new dashboard (JSON template or manual panels)
+- Set auto-refresh to `15s`
+
+---
+# ✅ This monitoring stack gives real-time visibility into each OCOS full node.
+# You can scale this for 2738 nodes using service discovery, node labels, or remote write setups.
