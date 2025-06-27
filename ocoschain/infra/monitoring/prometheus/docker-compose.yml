@@ -1,0 +1,92 @@
+---
+# infra/monitoring/docker-compose.yml
+# =====================================
+# 🌍 OCOS Global Monitoring Stack (Federation + Remote Write Ready)
+# Includes region-specific Prometheus, centralized aggregator, Grafana UI, and VictoriaMetrics
+
+version: '3.9'
+
+services:
+
+  prometheus-eu:
+    image: prom/prometheus:latest
+    container_name: prometheus-eu
+    volumes:
+      - ./prometheus/eu/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data_eu:/prometheus
+    ports:
+      - "9091:9090"
+
+  prometheus-us:
+    image: prom/prometheus:latest
+    container_name: prometheus-us
+    volumes:
+      - ./prometheus/us/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data_us:/prometheus
+    ports:
+      - "9092:9090"
+
+  prometheus-asia:
+    image: prom/prometheus:latest
+    container_name: prometheus-asia
+    volumes:
+      - ./prometheus/asia/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data_asia:/prometheus
+    ports:
+      - "9093:9090"
+
+  prometheus-me:
+    image: prom/prometheus:latest
+    container_name: prometheus-me
+    volumes:
+      - ./prometheus/me/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data_me:/prometheus
+    ports:
+      - "9094:9090"
+
+  prometheus-af:
+    image: prom/prometheus:latest
+    container_name: prometheus-af
+    volumes:
+      - ./prometheus/af/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data_af:/prometheus
+    ports:
+      - "9095:9090"
+
+  prometheus-federation:
+    image: prom/prometheus:latest
+    container_name: prometheus-federation
+    volumes:
+      - ./prometheus/federation.yaml:/etc/prometheus/prometheus.yml
+      - prometheus_data_fed:/prometheus
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ocos-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+  victoriametrics:
+    image: victoriametrics/victoria-metrics:latest
+    container_name: vm-timeseries-db
+    ports:
+      - "8428:8428"
+    volumes:
+      - vm_data:/storage
+
+volumes:
+  prometheus_data_eu:
+  prometheus_data_us:
+  prometheus_data_asia:
+  prometheus_data_me:
+  prometheus_data_af:
+  prometheus_data_fed:
+  grafana_data:
+  vm_data:
