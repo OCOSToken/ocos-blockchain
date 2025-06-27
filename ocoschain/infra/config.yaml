@@ -1,0 +1,88 @@
+---
+# infra/config/config.yaml
+# ==========================
+# 🔐 OCOS Full Node — Production Configuration
+# This file represents a real-world validated runtime configuration.
+
+node:
+  role: "validator"
+  sync_mode: "full"
+  network_id: 31337
+  identity: "node-eu-01"
+  datadir: "/root/.ocos"
+  bootnodes:
+    - "enode://d3f47aa2@138.201.82.100:30303"
+    - "enode://85c2e9f0@3.91.24.55:30303"
+
+api:
+  rpc:
+    enabled: true
+    address: "0.0.0.0"
+    port: 8545
+    cors: "*"
+    vhosts:
+      - "localhost"
+      - "0.0.0.0"
+    apis:
+      - "eth"
+      - "net"
+      - "web3"
+      - "admin"
+  ws:
+    enabled: true
+    address: "0.0.0.0"
+    port: 8546
+    origins:
+      - "*"
+    apis:
+      - "eth"
+      - "net"
+      - "web3"
+      - "admin"
+
+p2p:
+  listen_port: 30303
+  discovery_port: 30304
+  max_peers: 125
+  nat: "extip:138.201.82.100"
+  staticnodes:
+    - "enode://f4e9b1c3@185.82.219.10:30303"
+    - "enode://a12fe24e@102.165.32.91:30303"
+
+telemetry:
+  prometheus:
+    enabled: true
+    port: 6060
+    path: "/metrics"
+
+security:
+  tls:
+    enabled: true
+    cert_path: "/etc/ocos/tls/fullchain.pem"
+    key_path: "/etc/ocos/tls/privkey.pem"
+  firewall:
+    allow:
+      - 22
+      - 30303
+      - 8545
+      - 8546
+      - 30304
+
+logging:
+  level: "info"
+  log_to_file: true
+  file_path: "/var/log/ocos/node.log"
+  max_size_mb: 100
+  max_files: 7
+
+backup:
+  enabled: true
+  target_dir: "/backup/ocos"
+  interval_hours: 12
+  retention_days: 14
+
+metadata:
+  maintainer: "OCOS Global Infra Division"
+  location: "Hetzner EU1"
+  config_version: "1.1.0"
+  last_updated: "2025-06-27"
