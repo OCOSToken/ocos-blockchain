@@ -1,0 +1,65 @@
+---
+# infra/monitoring/prometheus/federation.yaml
+# ============================================
+# 🌐 Prometheus Federation — Global Metrics Aggregator
+# Aggregates metrics from 2738 OCOS nodes deployed across regions
+
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+
+scrape_configs:
+  - job_name: 'regional-prometheus'
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+        - '{__name__=~"up|http_requests_total|p2p_peers|disk_usage_bytes"}'
+    static_configs:
+      - targets:
+          - 'prometheus-eu1:9090'
+          - 'prometheus-us1:9090'
+          - 'prometheus-asia1:9090'
+          - 'prometheus-me1:9090'
+          - 'prometheus-af1:9090'
+
+---
+# infra/monitoring/prometheus/remote-write.yaml
+# =============================================
+# 📡 Prometheus Remote Write Configuration
+# Pushes metrics to a centralized time-series storage (e.g., Thanos, Cortex, VictoriaMetrics)
+
+global:
+  scrape_interval: 15s
+
+remote_write:
+  - url: "https://metrics.ocos.io/api/v1/write"
+    bearer_token_file: "/etc/prometheus/token"
+    queue_config:
+      capacity: 10000
+      max_shards: 30
+      max_samples_per_send: 1000
+      batch_send_deadline: 5s
+
+scrape_configs:
+  - job_name: 'local-ocos-node'
+    static_configs:
+      - targets: ['localhost:6060']
+
+---
+# Deployment Architecture Overview
+# =================================
+
+📌 **Region-Level Prometheus Nodes**: 
+- Each major region (EU, US, Asia, ME, Africa) runs its own Prometheus collecting ~500–600 nodes.
+- Each Prometheus exposes `/federate` endpoint for central Prometheus federation.
+
+📡 **Central Federation Prometheus**: 
+- Scrapes each regional Prometheus at `/federate` and aggregates global metrics.
+
+🛰️ **Optional Remote Write**:
+- All nodes can push directly to long-term TSDB systems like Thanos, Cortex, or VictoriaMetrics.
+- Uses token-based authentication and write queue management for stability.
+
+---
+# ✅ With this setup, OCOS can monitor thousands of nodes with resilience, scalability, and real-time observability.
